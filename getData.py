@@ -10,15 +10,16 @@ import re
 
 #Comment the following and specify the dir for deguging, for ex
 if len(sys.argv)!=2:
-     print 'Parse error\nCorrect usage:$ python '+sys.argv[0]+' <input file name>'
+     print 'Parse error\nCorrect usage:$ python '+sys.argv[0]+' <data Directory path>'
      exit()
 dir = sys.argv[1]
 
 #dir = './Task2/'
 
 files = os.listdir(dir)
-files = sorted(files, key=lambda x: (int(re.sub('\D','',x)),x))
+files = sorted(files, key=lambda x: (int(re.sub('\D','',x)),x)) #Natural sort (we want U1S1 < U10S1)
 
+xAll = []; yAll = [];
 for iterFile in range(0,len(files)):
     currFile = files[iterFile]
     fid = open(dir+currFile, "r")
@@ -34,4 +35,8 @@ for iterFile in range(0,len(files)):
             azimuth.append(x.split(' ')[4])
             alt.append(x.split(' ')[5])
             psi.append(x.split(' ')[6])
-    fid.close()
+     xAll.append(xVal)
+     yAll.append(yVal)
+     fid.close()
+
+
