@@ -17,7 +17,7 @@ dir = sys.argv[1]
 #dir = './Task2/'
 
 files = os.listdir(dir)
-#files = sorted(files, key=lambda x: (int(re.sub('\D','',x)),x))
+files = sorted(files, key=lambda x: (int(re.sub('\D','',x)),x))
 
 for iterFile in range(0,len(files)):
     currFile = files[iterFile]
