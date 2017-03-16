@@ -19,8 +19,8 @@ dir = './Task1/'
 files = os.listdir(dir)
 files = sorted(files, key=lambda x: (int(re.sub('\D','',x)),x)) #Natural sort (we want U1S1 < U10S1)
 
-xAll = []; yAll = []
 xGen = []; xFake = []
+yGen  = []; yFake = []
 flag = 1
 counter = 0
 for iterFile in range(0,len(files)):
@@ -36,6 +36,7 @@ for iterFile in range(0,len(files)):
         yVal.append(x.split(' ')[1])
         timeStamp.append(x.split(' ')[2])
         buttonStatus.append(x.split(' ')[3])
+	# Uncomment the next three lines for Task2
         #azimuth.append(x.split(' ')[4])
         #alt.append(x.split(' ')[5])
         #psi.append(x.split(' ')[6])
@@ -46,9 +47,10 @@ for iterFile in range(0,len(files)):
 
 	if flag:
 		xGen.append(xVal)
+		yGen.append(yVal)
 	else:
 		xFake.append(xVal)
+		yFake.append(yVal)
 	counter+=1
 	if counter % 20 == 0:
 		flag = not flag
-p=0
