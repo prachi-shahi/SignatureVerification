@@ -53,8 +53,10 @@ for iterFile in range(0,len(files)):
 
 	if flag:
 		xGen.append(xVal)
+		yGen.append(yVal)
 	else:
 		xFake.append(xVal)
+		yFake.append(yVal)
 	counter+=1
 	if counter % 20 == 0:
 		flag = not flag
