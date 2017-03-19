@@ -1,15 +1,14 @@
 # Usage: $python getData.py dataSetDirectory
 # It does the following:
-#	1. Opens the directory
-#   2. Opens all the files in the directory sequentialy
+# 	1. Opens the directory
+#   2. Opens all the files in the directory sequentially
 #   3. Reads the features from the data files
 
 import os
-import sys
 import re
 from fastdtw import fastdtw
 
-#Comment the following and specify the dir for debugging, for ex
+# Comment the following and specify the dir for debugging, for ex
 # if len(sys.argv)!=2:
 # 	print 'Parse error\nCorrect usage:$ python '+sys.argv[0]+' <data Directory path>'
 # 	exit()
@@ -18,7 +17,7 @@ from fastdtw import fastdtw
 dir = './Task1/'
 
 files = os.listdir(dir)
-files = sorted(files, key=lambda x: (int(re.sub('\D','',x)),x)) #Natural sort (we want U1S1 < U10S1)
+files = sorted(files, key=lambda x: (int(re.sub('\D', '', x)), x)) #Natural sort (we want U1S1 < U10S1)
 
 xAll = []; yAll =[]
 
@@ -58,20 +57,24 @@ xGenDTW = []
 yGenDTW = []
 xFakeDTW = []
 yFakeDTW = []
+xGenTest = []
+xFakeTest = []
+yGenTest = []
+yFakeTest = []
 
 for i in range(0, 800, 40):
     xRef = xAll[i:i+5]
     xGenTrain = xAll[i+5:i+15]
-    xGenTest = xAll[i+15:i+20]
+    xGenTest.append(xAll[i+15:i+20])
     xFakeTrain = xAll[i+20:i+35]
-    xFakeTest = xAll[i+35:i+40]
+    xFakeTest.append(xAll[i+35:i+40])
 
 
     yRef = yAll[i:i+5]
     yGenTrain = yAll[i+5:i+15]
-    yGenTest = yAll[i+15:i+20]
+    yGenTest.append(yAll[i+15:i+20])
     yFakeTrain = yAll[i+20:i+35]
-    yFakeTest = yAll[i+35:i+40]
+    yFakeTest.append(yAll[i+35:i+40])
 
     for j in range(0,5):
 		for k in range(0,10):
@@ -85,4 +88,28 @@ for i in range(0, 800, 40):
 			yDist, path = fastdtw(yRef[j], yFakeTrain[k], dist=None)
 			yFakeDTW.append(yDist)
 
+
+fGenTrain = open("genTrain.txt", "w")
+fGenTrain.writelines("%s " % str(item) for item in xGenDTW)
+fGenTrain.write("\n")
+fGenTrain.writelines("%s " % str(item) for item in yGenDTW)
+fGenTrain.close()
+
+fFakeTrain = open("fakeTrain.txt", "w")
+fFakeTrain.writelines("%s " % str(item) for item in xFakeDTW)
+fFakeTrain.write("\n")
+fFakeTrain.writelines("%s " % str(item) for item in yFakeDTW)
+fFakeTrain.close()
+
+fGenTest = open("genTest.txt", "w")
+fGenTest.writelines("%s " % str(item) for item in xGenTest)
+fGenTest.write("\n")
+fGenTest.writelines("%s " % str(item) for item in yGenTest)
+fGenTest.close()
+
+fFakeTest = open("fakeTest.txt", "w")
+fFakeTest.writelines("%s " % str(item) for item in xFakeTest)
+fFakeTest.write("\n")
+fFakeTest.writelines("%s " % str(item) for item in yFakeTest)
+fFakeTest.close()
 
