@@ -7,6 +7,7 @@
 import os
 import re
 from fastdtw import fastdtw
+import numpy as np
 
 # Comment the following and specify the dir for debugging, for ex
 # if len(sys.argv)!=2:
@@ -89,27 +90,7 @@ for i in range(0, 800, 40):
 			yFakeDTW.append(yDist)
 
 
-fGenTrain = open("genTrain.txt", "w")
-fGenTrain.writelines("%s " % str(item) for item in xGenDTW)
-fGenTrain.write("\n")
-fGenTrain.writelines("%s " % str(item) for item in yGenDTW)
-fGenTrain.close()
-
-fFakeTrain = open("fakeTrain.txt", "w")
-fFakeTrain.writelines("%s " % str(item) for item in xFakeDTW)
-fFakeTrain.write("\n")
-fFakeTrain.writelines("%s " % str(item) for item in yFakeDTW)
-fFakeTrain.close()
-
-fGenTest = open("genTest.txt", "w")
-fGenTest.writelines("%s " % str(item) for item in xGenTest)
-fGenTest.write("\n")
-fGenTest.writelines("%s " % str(item) for item in yGenTest)
-fGenTest.close()
-
-fFakeTest = open("fakeTest.txt", "w")
-fFakeTest.writelines("%s " % str(item) for item in xFakeTest)
-fFakeTest.write("\n")
-fFakeTest.writelines("%s " % str(item) for item in yFakeTest)
-fFakeTest.close()
-
+np.savetxt("genTrain.txt",(xGenDTW, yGenDTW),delimiter=', ')
+np.savetxt("fakeTrain.txt",(xFakeDTW, yFakeDTW), delimiter=', ')
+np.savetxt("genTest.txt", (xGenTest, yGenTest), delimiter=', ')
+np.savetxt("fakeTest.txt", (xFakeTest, yFakeTest), delimiter=', ')
