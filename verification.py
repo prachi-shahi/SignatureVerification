@@ -2,6 +2,7 @@ import os
 import re
 from fastdtw import fastdtw
 import numpy as np
+import random
 
 
 def gaussianND(X, mu, sigma):
@@ -75,11 +76,11 @@ def getXY(xAll, yAll, TESTFILEPATH):
 
     fid = open(TESTFILEPATH, 'r')
     lines=fid.readlines(); lines = [l.strip('\n\r') for l in lines]
-    lines = lines[0:len(lines)]
+    lines = lines[1:len(lines)]
     xVal_test = []; yVal_test = []
     for x in lines:
-        xVal_test.append(float(x.split(', ')[0]))
-        yVal_test.append(float(x.split(', ')[1]))
+        xVal_test.append(float(x.split()[0]))
+        yVal_test.append(float(x.split()[1]))
 
 
     # COMPUTE DTW
@@ -161,12 +162,16 @@ k = 2                       # k is the number of clusters in each GMM
 #     exit()
 #
 # TESTFILEPATH = sys.argv[1]
-TESTFILEPATH = './Task1/U19S16.txt'
+# TESTFILEPATH = '../PRML_MP/Task1/U19S16.txt'
 
 if __name__ == "__main__":
-    dir = './Task1/'
+    dir = '../PRML_MP/Task1/'
     files = os.listdir(dir)
     files = sorted(files, key=lambda x: (int(re.sub('\D','',x)),x)) #Natural sort (we want U1S1 < U10S1)
+
+    testDir = '../PRML_MP/testFiles/'
+    testfiles = os.listdir(testDir)
+    random.shuffle(testfiles)
 
     xAll = []; yAll =[]
 
@@ -174,33 +179,62 @@ if __name__ == "__main__":
         currFile = files[iterFile]
         fid = open(dir+currFile, "r")
         lines=fid.readlines(); lines = [l.strip('\n\r') for l in lines]
-        lines = lines[0:len(lines)]
+        lines = lines[1:len(lines)]
         xVal = []; yVal = []
 
         for x in lines:
-            xVal.append(float(x.split(', ')[0]))
-            yVal.append(float(x.split(', ')[1]))
+            xVal.append(float(x.split()[0]))
+            yVal.append(float(x.split()[1]))
         fid.close()
 
         xAll.append(xVal)
         yAll.append(yVal)
 
+    result = []
+    for testIdx in range(0, len(testfiles)):
+        name = testfiles[testIdx]
+        TESTFILEPATH = dir+name
+        X, Y, userID = getXY(xAll, yAll, TESTFILEPATH)
+        print '\nUSER ID: ', userID, '\n'
+        if int(name[4:6])<20:
+            gen = 1; fake = 0
+        else:
+            gen = 0; fake = 1
+        dtw = np.array([[X, Y]])
+        posteriorGen = 0
+        posteriorFake = 0
+        for i in range(0,k):
+            posteriorGen = posteriorGen + phiGen[0][i]*gaussianND(dtw, muGen[i], sigmaGen[i])
+            posteriorFake = posteriorFake + phiFake[0][i]*gaussianND(dtw, muFake[i], sigmaGen[i])
+        if posteriorGen > posteriorFake:
+            # print "Genuine"
+            if gen==1:
+                result.append(1)
+            else:
+                result.append(0)
+        else:
+            # print "Forged"
+            if gen==1:
+                result.append(0)
+            else:
+                result.append(1)
 
-    X, Y, userID = getXY(xAll, yAll, TESTFILEPATH)
-    print '\nUSER ID: ', userID, '\n'
-
-    dtw = np.array([[X, Y]])
-
+countOnes = 0
+print result
+for i in range(0,len(result)):
+    if result[i]==1:
+        countOnes+=1
+accuracy = (float(countOnes)/len(result))*100
+print accuracy
 
 #   FINAL CLASSIFICATION BASED ON POSTERIOR PROBABILITIES
-posteriorGen = 0
-posteriorFake = 0
-for i in range(0,k):
-    posteriorGen = posteriorGen + phiGen[0][i]*gaussianND(dtw, muGen[i], sigmaGen[i])
-    posteriorFake = posteriorFake + phiFake[0][i]*gaussianND(dtw, muFake[i], sigmaGen[i])
-
-if posteriorGen > posteriorFake:
-    print "Genuine"
-else:
-    print "Forged"
-
+# posteriorGen = 0
+# posteriorFake = 0
+# for i in range(0,k):
+#     posteriorGen = posteriorGen + phiGen[0][i]*gaussianND(dtw, muGen[i], sigmaGen[i])
+#     posteriorFake = posteriorFake + phiFake[0][i]*gaussianND(dtw, muFake[i], sigmaGen[i])
+#
+# if posteriorGen > posteriorFake:
+#     print "Genuine"
+# else:
+#     print "Forged"
