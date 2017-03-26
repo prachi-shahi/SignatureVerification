@@ -8,6 +8,7 @@ import os
 import re
 from fastdtw import fastdtw
 import numpy as np
+from sklearn.decomposition import PCA
 
 # Comment the following and specify the dir for debugging, for ex
 # if len(sys.argv)!=2:
@@ -41,6 +42,7 @@ for iterFile in range(0,len(files)):
 
 	fid.close()
 
+	#	ADJUST TRANSLATION
 	xFirst = int(xVal[0])
 	yFirst = int(yVal[0])
 	for i in range(int(rowsCount)):
@@ -48,6 +50,17 @@ for iterFile in range(0,len(files)):
 		yVal[i] = int(yVal[i])
 		xVal[i] = xVal[i]-xFirst
 		yVal[i] = yVal[i]-yFirst
+
+	#	ADJUST ROTATION
+	feat = np.column_stack((xVal, yVal))
+	pca = PCA(n_components=1)
+	pca.fit(feat)
+	print pca.components_
+	theta = -np.arctan(pca.components_[0][1]/pca.components_[0][0])
+	rot = [[np.cos(theta), np.sin(-theta)], [np.sin(theta), np.cos(theta)]]
+	rotated_feat = np.matmul(rot,feat.T)
+	xVal = rotated_feat[0]
+	yVal = rotated_feat[1]
 
 	xAll.append(xVal)
 	yAll.append(yVal)
@@ -90,7 +103,8 @@ for i in range(0, 800, 40):
 			yFakeDTW.append(yDist)
 
 
-np.savetxt("genTrain.txt",(xGenDTW, yGenDTW),delimiter=', ')
-np.savetxt("fakeTrain.txt",(xFakeDTW, yFakeDTW), delimiter=', ')
-np.savetxt("genTest.txt", (xGenTest, yGenTest), delimiter=', ')
-np.savetxt("fakeTest.txt", (xFakeTest, yFakeTest), delimiter=', ')
+np.savetxt("gendistx.txt",xGenDTW)
+np.savetxt("gendisty.txt",yGenDTW)
+np.savetxt("fakedistx.txt",xFakeDTW)
+np.savetxt("fakedisty.txt",yFakeDTW)
+
