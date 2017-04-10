@@ -64,7 +64,7 @@ def train(num_data):
     y = np.zeros((length,1))
 
     for i in range(length):
-        if (i<length/2):
+    if (i<length/2):
             y[i] = 1
         else:
             y[i] = 0
@@ -107,7 +107,6 @@ def grad_descent(X, y):
             new_theta[l] = theta[l] - alpha*deriv(X, y, theta, l)
         iter = iter+1
         maxDiff = np.max(np.absolute(new_theta - theta))
-
         if maxDiff<GRAD_DES_THRESH:
             break
 
