@@ -64,7 +64,7 @@ def compute_cost(h_theta, y):
     return (-y*np.log(h_theta) - (1-y)*np.log(1-h_theta))
 
 
-def grad_descent(X, y, length):
+
 
     global alpha
 
@@ -146,7 +146,7 @@ def train():
     X1 = np.hstack((x1, x2))
     X2 = np.hstack((y1, y2))
     X=np.vstack((X1,X2)).T
-
+    print (X)
 
     length=X.shape[0]
 
@@ -154,10 +154,9 @@ def train():
     no_of_dim=X.shape[1]
 
     for i in range(length):
-        if (i<1000):
+        if (i<2000):
             y[i] = 1
         else:
-
             y[i] = 0
 
     theta = np.zeros((no_of_dim+1, 1))
@@ -172,7 +171,7 @@ def predict(theta):
     files = os.listdir(dir)
     files = sorted(files, key=lambda x: (int(re.sub('\D', '', x)), x))  # Natural sort (we want U1S1 < U10S1)
 
-    testDir = 'testfiles/'
+    testDir = 'testFiles/'
     testfiles = os.listdir(testDir)
     random.shuffle(testfiles)
 

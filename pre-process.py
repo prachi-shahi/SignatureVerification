@@ -4,7 +4,7 @@ import re
 from sklearn.decomposition import PCA
 
 #   OPEN THE FILES SEQUENTIALLY
-dir = "./Task1/"
+dir = "./testFiles/"
 
 files = os.listdir(dir)
 files = sorted(files, key=lambda x: (int(re.sub('\D','',x)),x)) #Natural sort (we want U1S1 < U10S1)
@@ -23,19 +23,17 @@ for iterFile in range(0,len(files)):
 	xVal = []; yVal = []; timeStamp = []; buttonStatus = [];
 
 	for x in lines:
-		xVal.append(x.split(' ')[0])
-		yVal.append(x.split(' ')[1])
-		timeStamp.append(x.split(' ')[2])
-		buttonStatus.append(x.split(' ')[3])
+		xVal.append(x.split(', ')[0])
+		yVal.append(x.split(', ')[1])
 
 	fid.close()
 
 	#   ADJUST TRANSLATION
-	xFirst = int(xVal[0])
-	yFirst = int(yVal[0])
+	xFirst = float(xVal[0])
+	yFirst = float(yVal[0])
 	for i in range(int(rowsCount)):
-		xVal[i] = int(xVal[i])
-		yVal[i] = int(yVal[i])
+		xVal[i] = float(xVal[i])
+		yVal[i] = float(yVal[i])
 		xVal[i] = xVal[i]-xFirst
 		yVal[i] = yVal[i]-yFirst
 
@@ -48,4 +46,11 @@ for iterFile in range(0,len(files)):
 	theta = -np.arctan(pca.components_[0][1]/pca.components_[0][0])
 	rot = [[np.cos(theta), np.sin(-theta)], [np.sin(theta), np.cos(theta)]]
 	rotated_feat = np.matmul(rot,feat.T)
+	xVal = rotated_feat[0]
+	yVal = rotated_feat[1]
 
+	fid = open(dir+currFile, "w")
+	fid.writelines(rowsCount+'\n')
+	for i in range(int(rowsCount)):
+		fid.writelines(str(xVal[i])+', '+str(yVal[i])+'\n')
+	fid.close()
